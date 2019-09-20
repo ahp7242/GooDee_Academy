@@ -17,7 +17,7 @@ public class IndexServlet extends HttpServlet {
 		System.out.println("/index URL 요청");
 		// EmployeesDao employeesDao = new EmployeesDao();
 		this.employeesDao = new EmployeesDao();
-		int employeesRowCount = employeesDao.selectEmployeesCount();
+		int employeesRowCount = employeesDao.selectEmployeesRowCount();
 		
 		request.setAttribute("employeesRowCount", employeesRowCount); // 오토박싱
 		
