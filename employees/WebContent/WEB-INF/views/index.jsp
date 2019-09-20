@@ -17,7 +17,7 @@
 	<!-- WEB APP 네비게이션 -->
 	<div>
 		<ul>
-			<li><a href="${pageContext.request.contextPath }/departmentsgetDepartmentsList">부서 목록</a></li>
+			<li><a href="${pageContext.request.contextPath }/departments/getDepartmentsList">부서 목록</a></li>
 			<li><a href="<%=request.getContextPath() %>/employees/getEmployeesList">사원 목록</a></li>
 		</ul>
 	</div>

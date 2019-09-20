@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import model.EmployeesDao;
 import vo.Employees;
 
-@WebServlet("/GetEmployeesListServlet")
+@WebServlet("/employees/getEmployeesList")
 public class GetEmployeesListServlet extends HttpServlet {
 	private EmployeesDao employeesDao;
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
