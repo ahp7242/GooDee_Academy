@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import model.EmployeesDao;
 
-@WebServlet("/index")
+@WebServlet({"/", "/index"})
 public class IndexServlet extends HttpServlet {
 	private EmployeesDao employeesDao;
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -21,9 +21,6 @@ public class IndexServlet extends HttpServlet {
 		
 		request.setAttribute("employeesRowCount", employeesRowCount); // 오토박싱
 		
-		// /WEB-INF/views/index.jsp
-		// RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/index.jsp");
-		// rd.forward(request, response);
 		request.getRequestDispatcher("/WEB-INF/views/index.jsp").forward(request, response);
 	}
 }
