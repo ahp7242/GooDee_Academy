@@ -32,7 +32,7 @@
 			<option value="40">40</option>
 			<option value="50">50</option>
 		</select>개씩 보기
-		<button type="button" class="btn btn-secondary">사원 목록</button>
+		<button type="sumbit" class="btn btn-secondary">사원 목록</button>
 	</form>
 	<table class="table">
 		<thead class="thead-dark">
