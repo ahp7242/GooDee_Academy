@@ -7,7 +7,10 @@
 <title>departmentsList</title>
 </head>
 <body>
-	<h1>부서목록</h1>
+	<h1>부서 목록</h1>
+	<div>
+		<a href="${pageContext.request.contextPath }/">홈으로</a>
+	</div>
 	<table border="1">
 		<thead>
 			<tr>

@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class TitlesDao {
+	
+	// titles 테이블의 리스트의 전체 행의 수
 	public int selectTitlesRowCount() {
 		int count = 0;
 		Connection conn = null;
@@ -20,8 +22,8 @@ public class TitlesDao {
 			if(rs.next()) {
 				count = rs.getInt("cnt");
 			}
-		} catch(Exception e) { // 자바의 변수 생명주기는 {} 밑에 Exception e와 다른 값이다.
-			e.printStackTrace(); // 예외 발생시 콘솔에 예외코드 출력.
+		} catch(Exception e) { 
+			e.printStackTrace();
 		} finally {
 			try {
 				rs.close();

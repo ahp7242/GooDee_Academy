@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class DeptManagerDao {
+	
+	// Dept_manager 테이블의 리스트의 전체 행의 수
 	public int selectDeptManagerRowCount() {
 		int count = 0;
 		Connection conn = null;

@@ -7,7 +7,7 @@ import vo.Departments;
 
 public class DepartmentsDao {
 	
-	// Departments의 리스트의 전체 행의 수
+	// Departments 테이블의 리스트의 전체 행의 수
 	public int selectDepartmentsRowCount() {
 		int count = 0;
 		Connection conn = null;
@@ -37,13 +37,13 @@ public class DepartmentsDao {
 	}
 	
 	
-	// Departments의 리스트(부서목록)
+	// Departments 테이블의 리스트(부서목록)
 	public List<Departments> selectDepartmentsList(){
 		List<Departments> list = new ArrayList<Departments>();
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		String sql = "SELECT dept_no, dept_name FROM departments";
+		String sql = "SELECT dept_no, dept_name FROM departments ORDER BY dept_no ASC";
 		try {
 			Class.forName("org.mariadb.jdbc.Driver");
 			conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/employees", "root", "java1234");

@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 
 public class DeptEmpDao {
 	
-	// Dept_emp의 리스트의 전체 행의 수
+	// Dept_emp 테이블의 리스트의 전체 행의 수
 	public int selectDeptEmpRowCount() {
 		int count = 0;
 		Connection conn = null;
