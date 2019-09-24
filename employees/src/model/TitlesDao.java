@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import db.DBHelper;
+
 public class TitlesDao {
 	
 	// titles 테이블의 리스트의 전체 행의 수
@@ -15,8 +17,7 @@ public class TitlesDao {
 		ResultSet rs = null;
 		String sql = "SELECT COUNT(*) cnt FROM titles";
 		try {
-			Class.forName("org.mariadb.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/employees", "root", "java1234");
+			conn = DBHelper.getConnection(); // DB 메소드화
 			stmt = conn.prepareStatement(sql);
 			rs = stmt.executeQuery();
 			if(rs.next()) {
@@ -26,9 +27,7 @@ public class TitlesDao {
 			e.printStackTrace();
 		} finally {
 			try {
-				rs.close();
-				stmt.close();
-				conn.close();
+				DBHelper.close(rs, stmt, conn); // close 메소드화
 			} catch(Exception e) {
 				e.printStackTrace(); 
 			}
