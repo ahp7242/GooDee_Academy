@@ -38,6 +38,8 @@ public class IndexServlet extends HttpServlet {
 		// EmployeesDao employeesDao = new EmployeesDao();
 		this.employeesDao = new EmployeesDao();
 		int employeesRowCount = employeesDao.selectEmployeesRowCount();
+		int maxEmpNo = employeesDao.selectEmpNo("max");
+		int minEmpNo = employeesDao.selectEmpNo("min");
 		
 		salariesDao = new SalariesDao();
 		int salariesRowCount = salariesDao.selectSalariesRowCount();
@@ -51,6 +53,8 @@ public class IndexServlet extends HttpServlet {
 		request.setAttribute("employeesRowCount", employeesRowCount); // 오토박싱
 		request.setAttribute("salariesRowCount", salariesRowCount);
 		request.setAttribute("titlesRowCount", titlesRowCount);
+		request.setAttribute("maxEmpNo", maxEmpNo);
+		request.setAttribute("minEmpNo", minEmpNo);
 		
 		request.getRequestDispatcher("/WEB-INF/views/index.jsp").forward(request, response);
 	}

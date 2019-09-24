@@ -78,10 +78,20 @@
 				<a href="${pageContext.request.contextPath }/employees/getEmployeesListOrderBy?order=desc"><button type="button" class="btn btn-outline-success">내림차순(limit 50)</button></a>
 			</li>
 			<li>
+				<form method="get" action="${pageContext.request.contextPath }/employees/getEmployeesListBetween">
+					<button type="submit" class="btn btn-outline-success">사원목록(between...and...)</button>
+					<input type="number" name="begin">~<input type="number" name="end">
+					(${minEmpNo }~${maxEmpNo })
+				</form>
+			</li>
+			<li>
 				<a href="${pageContext.request.contextPath }/titles/getTitlesListDistinct"><button type="button" class="btn btn-outline-success">업무 목록(중목제거 distinct)</button></a>
 			</li>
 			<li>
 				<a href="${pageContext.request.contextPath }/salaries/getSalariesStatistics"><button type="button" class="btn btn-outline-success">연봉 통계값(count, sum, avg, max, min, std)</button></a>
+			</li>
+			<li>
+				<a href="${pageContext.request.contextPath }/employees/getEmployeesCountBy"><button type="button" class="btn btn-outline-success">사원 수(성별)</button></a>
 			</li>
 		</ul>
 	</div>
