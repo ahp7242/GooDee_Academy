@@ -29,8 +29,8 @@
 	<h1>Index</h1>
 	<h2>테이블 정보</h2>
 	<div>
-		<table border="1">
-			<thead>
+		<table class="table">
+			<thead class="thead-light">
 				<tr>
 					<th>테이블 이름</th>
 					<th>전체 행의수</th>
@@ -69,12 +69,13 @@
 	<!-- WEB APP 네비게이션 -->
 	<div>
 		<ul>
-			<li><a href="${pageContext.request.contextPath }/departments/getDepartmentsList">부서 목록</a></li>
-			<li><a href="${pageContext.request.contextPath }/employees/getEmployeesList">사원 목록(limit 10)</a></li>
 			<li>
-				사원목록 - first_name
-				<a href="${pageContext.request.contextPath }/employees/getEmployeesListOrderBy?order=asc">오름차순(limit 50)</a> 
-				<a href="${pageContext.request.contextPath }/employees/getEmployeesListOrderBy?order=desc">내림차순(limit 50)</a>
+				<a href="${pageContext.request.contextPath }/departments/getDepartmentsList"><button type="button" class="btn btn-outline-success">부서 목록</button></a>
+			</li>
+			<li>
+				<a href="${pageContext.request.contextPath }/employees/getEmployeesList"><button type="button" class="btn btn-outline-success">사원 목록(limit 10)</button></a>
+				<a href="${pageContext.request.contextPath }/employees/getEmployeesListOrderBy?order=asc"><button type="button" class="btn btn-outline-success">오름차순(limit 50)</button></a> 
+				<a href="${pageContext.request.contextPath }/employees/getEmployeesListOrderBy?order=desc"><button type="button" class="btn btn-outline-success">내림차순(limit 50)</button></a>
 			</li>
 		</ul>
 	</div>

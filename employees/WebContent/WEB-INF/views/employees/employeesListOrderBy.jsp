@@ -21,6 +21,7 @@
 </head>
 <body>
 	<h1>사원 목록</h1>
+	<h5>정렬 기준 : first_name</h5>
 	<div>
 		<a href="${pageContext.request.contextPath }/"><button type="button" class="btn btn-outline-dark">홈으로</button></a>
 	</div>
