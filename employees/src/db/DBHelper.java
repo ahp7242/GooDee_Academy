@@ -15,24 +15,30 @@ public class DBHelper {
 	public static void close(ResultSet rs, Statement stmt, Connection conn) {
 		if(rs != null) {
 			try {
+				// 자원 반납
 				rs.close();
 			} catch(Exception e) {
+				// 반납이 안될시 예외 메세지 출력
 				e.printStackTrace(); 
 			}
 		}
 		
 		if(stmt != null) {
 			try {
+				// 자원 반납
 				stmt.close();
 			} catch(Exception e) {
+				// 반납이 안될시 예외 메세지 출력
 				e.printStackTrace(); 
 			}
 		}
 		
 		if(conn != null) {
 			try {
+				// 자원 반납
 				conn.close();
 			} catch(Exception e) {
+				// 반납이 안될시 예외 메세지 출력
 				e.printStackTrace(); 
 			}
 		}

@@ -24,29 +24,30 @@ public class IndexServlet extends HttpServlet {
 	private SalariesDao salariesDao;
 	private TitlesDao titlesDao;
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("/index URL 요청");
+		// URL 요청 확인
+		//System.out.println("/index URL 요청");
 		
-		departmentsDao = new DepartmentsDao();
-		int departmentsRowCount = departmentsDao.selectDepartmentsRowCount();
-		
+		// DAO 객체 생성
+		// DepartmentsDao departmentsDao = new DepartmentsDao();
+		this.departmentsDao = new DepartmentsDao();
 		deptEmpDao = new DeptEmpDao();
-		int deptEmpRowCount = deptEmpDao.selectDeptEmpRowCount();
-		
 		deptManagerDao = new DeptManagerDao();
-		int deptManagerRowCount = deptManagerDao.selectDeptManagerRowCount();
+		employeesDao = new EmployeesDao();
+		salariesDao = new SalariesDao();
+		titlesDao = new TitlesDao();
 		
-		// EmployeesDao employeesDao = new EmployeesDao();
-		this.employeesDao = new EmployeesDao();
+		// 각각의 RowCount값 저장
+		int departmentsRowCount = departmentsDao.selectDepartmentsRowCount();
+		int deptEmpRowCount = deptEmpDao.selectDeptEmpRowCount();
+		int deptManagerRowCount = deptManagerDao.selectDeptManagerRowCount();
 		int employeesRowCount = employeesDao.selectEmployeesRowCount();
+		int salariesRowCount = salariesDao.selectSalariesRowCount();
+		int titlesRowCount = titlesDao.selectTitlesRowCount();
+		
 		int maxEmpNo = employeesDao.selectEmpNo("max");
 		int minEmpNo = employeesDao.selectEmpNo("min");
 		
-		salariesDao = new SalariesDao();
-		int salariesRowCount = salariesDao.selectSalariesRowCount();
-		
-		titlesDao = new TitlesDao();
-		int titlesRowCount = titlesDao.selectTitlesRowCount();
-		
+		// request에 전송될 내용 포함
 		request.setAttribute("departmentsRowCount", departmentsRowCount);
 		request.setAttribute("deptEmpRowCount", deptEmpRowCount);
 		request.setAttribute("deptManagerRowCount", deptManagerRowCount);
@@ -56,6 +57,9 @@ public class IndexServlet extends HttpServlet {
 		request.setAttribute("maxEmpNo", maxEmpNo);
 		request.setAttribute("minEmpNo", minEmpNo);
 		
+		// /WEB-INF/views/index.jsp
 		request.getRequestDispatcher("/WEB-INF/views/index.jsp").forward(request, response);
+		// RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/index.jsp");
+		// rd.forward(request, response);
 	}
 }

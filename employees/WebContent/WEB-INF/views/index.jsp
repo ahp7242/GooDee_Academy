@@ -79,7 +79,7 @@
 			</li>
 			<li>
 				<form method="get" action="${pageContext.request.contextPath }/employees/getEmployeesListBetween">
-					<button type="submit" class="btn btn-outline-success">사원목록(between...and...)</button>
+					<button type="submit" class="btn btn-outline-success">사원목록(between.and.)</button>
 					<input type="number" name="begin">~<input type="number" name="end">
 					(${minEmpNo }~${maxEmpNo })
 				</form>
@@ -92,6 +92,12 @@
 			</li>
 			<li>
 				<a href="${pageContext.request.contextPath }/employees/getEmployeesCountBy"><button type="button" class="btn btn-outline-success">사원 수(성별)</button></a>
+			</li>
+			<li>
+				<a href="${pageContext.request.contextPath }/departments/getDepartmentsCountByDeptNo"><button type="button" class="btn btn-outline-success">현재 부서별 사원 수</button></a>
+			</li>
+			<li>
+				<a href="${pageContext.request.contextPath }/employees/getEmployeesListByPage"><button type="button" class="btn btn-outline-success">사원목록 페이징(10명씩)</button></a>
 			</li>
 		</ul>
 	</div>

@@ -15,11 +15,18 @@ import model.EmployeesDao;
 @WebServlet("/employees/getEmployeesCountBy")
 public class GetEmployeesCountByServlet extends HttpServlet {
 	private EmployeesDao employeesDao;
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// model 객체 생성
 		employeesDao = new EmployeesDao();
+		
+		// 출력할 데이터 저장
 		List<Map<String, Object>> list = employeesDao.selectEmployeesCountGroupByGender();
-		System.out.println("GetEmployeesListOrderByServlet param order : " + list);
+		//System.out.println("GetEmployeesListOrderByServlet param order : " + list);
+		
+		// request에 view로 넘길 list값 저장
 		request.setAttribute("list", list);
+		// view로 forward
 		request.getRequestDispatcher("/WEB-INF/views/employees/employeesListCountBy.jsp").forward(request, response);
 	}
 }

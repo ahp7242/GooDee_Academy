@@ -11,7 +11,7 @@ import db.DBHelper;
 
 public class SalariesDao {
 	
-	// salaries 테이블의 연봉 통계값
+	// salaries 테이블의 연봉 통계값을 알려주는 메소드
 	public Map<String, Long> selectSalariesStatistics(){
 		Map<String, Long> map = new HashMap<String, Long>();
 		Connection conn = null;
@@ -19,9 +19,13 @@ public class SalariesDao {
 		ResultSet rs = null;
 		String sql = "SELECT COUNT(salary), SUM(salary), AVG(salary), MAX(salary), MIN(salary), STD(salary) FROM salaries";
 		try {
+			// 드라이버 로딩, DB 연결
 			conn = DBHelper.getConnection();
+			// 쿼리문 저장
 			stmt = conn.prepareStatement(sql);
+			// 쿼리문 실행
 			rs = stmt.executeQuery();
+			// 결과값 저장하여 리턴
 			if(rs.next()) {
 				map.put("count", rs.getLong("COUNT(salary)"));
 				map.put("sum", rs.getLong("SUM(salary)"));
@@ -34,6 +38,7 @@ public class SalariesDao {
 			e.printStackTrace();
 		} finally {
 			try {
+				// 자원 반납
 				DBHelper.close(rs, stmt, conn);
 			} catch(Exception e) {
 				e.printStackTrace(); 
@@ -43,7 +48,7 @@ public class SalariesDao {
 	}
 	
 	
-	// salaries 테이블의 리스트의 전체 행의 수
+	// salaries 테이블의 리스트의 전체 행의 수를 알려주는 메소드
 	public int selectSalariesRowCount() {
 		int count = 0;
 		Connection conn = null;
@@ -51,10 +56,13 @@ public class SalariesDao {
 		ResultSet rs = null;
 		String sql = "SELECT COUNT(*) cnt FROM salaries";
 		try {
-			Class.forName("org.mariadb.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/employees", "root", "java1234");
+			// 드라이버 로딩, DB 연결
+			conn = DBHelper.getConnection();
+			// 쿼리문 저장
 			stmt = conn.prepareStatement(sql);
+			// 쿼리문 실행
 			rs = stmt.executeQuery();
+			// 결과값 저장하여 리턴
 			if(rs.next()) {
 				count = rs.getInt("cnt");
 			}
@@ -62,9 +70,8 @@ public class SalariesDao {
 			e.printStackTrace();
 		} finally {
 			try {
-				rs.close();
-				stmt.close();
-				conn.close();
+				// 자원 반납
+				DBHelper.close(rs, stmt, conn);
 			} catch(Exception e) {
 				e.printStackTrace(); 
 			}

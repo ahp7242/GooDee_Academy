@@ -15,14 +15,20 @@ import vo.Employees;
 @WebServlet("/employees/getEmployeesListOrderBy")
 public class GetEmployeesListOrderByServlet extends HttpServlet {
 	private EmployeesDao employeesDao;
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String order = request.getParameter("order");
-		System.out.println("GetEmployeesListOrderByServlet param order : " + order);
+		// model 객체 생성
 		employeesDao = new EmployeesDao();
+		
+		//System.out.println("GetEmployeesListOrderByServlet param order : " + order);
+		String order = request.getParameter("order");
+		
+		// 출력할 데이터 저장
 		List<Employees> list = employeesDao.selectEmployeesListOrderBy(order); // order : asc, desc
 		
+		// request에 view로 넘길 list값 저장
 		request.setAttribute("list", list);
-		
+		// view로 forward
 		request.getRequestDispatcher("/WEB-INF/views/employees/employeesListOrderBy.jsp").forward(request, response);
 	}
 }
