@@ -14,6 +14,30 @@ import vo.Employees;
 
 public class EmployeesDao {
 	
+	public String login(Employees employees) {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		String sessionEmpNo = null;
+		String sql = "SELECT emp_no,first_name,last_name FROM employees WHERE emp_no = ? AND (first_name = ? AND last_name = ?)";
+		try {
+			conn = DBHelper.getConnection();
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1,employees.getEmpNo());
+			stmt.setString(2, employees.getFirstName());
+			stmt.setString(3,employees.getLastName());
+			rs = stmt.executeQuery();
+			if(rs.next()) {
+				sessionEmpNo = rs.getString("emp_no");
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBHelper.close(rs, stmt, conn);
+		}
+		return sessionEmpNo;
+	}
+
 	
 	
 	// 사원목록 마지막 페이지를 리턴하는 메소드(페이징)

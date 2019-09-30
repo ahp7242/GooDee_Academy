@@ -27,6 +27,9 @@
 		4. 표현식 		- %= 	- el
 	 -->
 	<h1>Index</h1>
+	<c:if test="${sessionEmpNo != null}">
+		<a href="${pageContext.request.contextPath}/logout"><button type="button" class="btn btn-outline-danger">로그아웃</button></a>
+	</c:if >
 	<h2>테이블 정보</h2>
 	<div>
 		<table class="table">
