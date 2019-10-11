@@ -30,27 +30,22 @@
 	
 	#section {
 		margin-left: 300px;
-		margin-right: 500px;
-		margin-bottom: 100px;
 		background: white;
 	}
 </style>
 </head>
 <body>
 	<div id="aside">
-		<h1>MENU</h1>
-		<ul>
-			<li><a href="">Address</a></li>
-			<li><a href="">Customer</a></li>
-			<li><a href="">Business</a></li>
-			<li><a href="">Inventory</a></li>
-		</ul>
+		<!-- aside.html을 include -->
 	</div>
 	<div id="section">
 		<h1>INDEX</h1>
-		<div>
-		table 정보출력..
-		</div>
+		
 	</div>
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+	//aside.html include
+	$("#aside").load("/sakila/aside.html");
+</script>
 </html>

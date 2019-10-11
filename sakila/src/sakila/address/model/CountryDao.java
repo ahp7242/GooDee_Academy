@@ -10,6 +10,31 @@ import sakila.db.DBHelper;
 
 public class CountryDao {
 	
+	// city 페이지에 리스트 출력시 사용
+	public List<Country> selectCountryListAll(){
+		List<Country> list = new ArrayList<Country>();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		String sql = "SELECT * FROM country ORDER BY country_id ASC";
+		try {
+			conn = DBHelper.getConnection();
+			stmt = conn.prepareStatement(sql);
+			rs = stmt.executeQuery();
+			while(rs.next()) {
+				Country c = new Country();
+				c.setCountryId(rs.getInt("country_id"));
+				c.setCountry(rs.getString("country"));
+				list.add(c);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBHelper.close(rs, stmt, conn);
+		}
+		return list;
+	}
+	
 	public int selectCount() {
 		int count = 0;
 		Connection conn = null;
@@ -39,7 +64,6 @@ public class CountryDao {
 		
 		final int rowPerPage = 10;
 		int beginRow = (currentPage-1) * rowPerPage;
-		
 		
 		String sql = "SELECT * FROM country ORDER BY country_id DESC LIMIT ?, ?";
 		try {
