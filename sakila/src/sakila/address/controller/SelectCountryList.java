@@ -26,6 +26,7 @@ public class SelectCountryList extends HttpServlet {
 		
 		countryDao = new CountryDao();
 		List<Country> list = countryDao.selectCountryList(currentPage);
+		
 		Gson gson = new Gson();
 		String jsonList = gson.toJson(list);
 		System.out.println(jsonList);

@@ -10,6 +10,28 @@ import sakila.db.DBHelper;
 
 public class CountryDao {
 	
+	// index 페이지에 테이블 행의수 출력시 사용
+	public int selectCountryCount() {
+		int count = 0;
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		String sql = "SELECT COUNT(*) FROM country";
+		try {
+			conn = DBHelper.getConnection();
+			stmt = conn.prepareStatement(sql);
+			rs = stmt.executeQuery();
+			if(rs.next()) {
+				count = rs.getInt("COUNT(*)");
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBHelper.close(rs, stmt, conn);
+		}
+		return count;
+	}
+	
 	// city 페이지에 리스트 출력시 사용
 	public List<Country> selectCountryListAll(){
 		List<Country> list = new ArrayList<Country>();

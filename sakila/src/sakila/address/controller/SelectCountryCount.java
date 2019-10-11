@@ -17,10 +17,13 @@ public class SelectCountryCount extends HttpServlet {
 	private CountryDao countryDao;
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json");
+		
 		countryDao = new CountryDao();
 		int count = countryDao.selectCount();
+		
 		Gson gson = new Gson();
 		String jsonCount = gson.toJson(count);
+		System.out.println(jsonCount);
 		response.getWriter().write(jsonCount);
 	}
 }
