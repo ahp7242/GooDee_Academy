@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>sakila index</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+	body {
+		padding: 0;
+		margin: 0;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+		background-position: 0 0;
+		background-repeat: no-repeat;
+		background-attachment: fixed;
+		background-size: cover;
+		position: relative;
+		overflow-y: auto;
+	}
+	
+	#aside {
+		width: 200px;
+		height: 3000px;
+		position: fixed;
+		background: orange;
+		overflow: hidden;
+		float: left;
+	}
+	
+	#section {
+		margin-left: 300px;
+		background: white;
+	}
+	
+	table, th, td{
+		border: 1px solid #000000;
+		border-collapse: collapse;
+	}
+</style>
+</head>
+<body>
+	<div id="aside">
+		<!-- aside.html을 include -->
+	</div>
+	<div id="section">
+		<h1>INDEX</h1>		
+		<h2>sakila database table 정보</h2>
+		<table>
+			<thead>
+				<tr>
+					<th>테이블 이름</th>
+					<th>행의 수 </th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>country</td>
+					<td><span id="CountryRow"></span></td>
+				</tr>
+				<tr>
+					<td>city</td>
+					<td><span id="CityRow"></span></td>
+				</tr>
+				<tr>
+					<td>address</td>
+					<td><span id="AddressRow"></span></td>
+				</tr>
+				<tr>
+					<td>customer</td>
+					<td><span id="CustomerRow"></span></td>
+				</tr>
+				<tr>
+					<td>staff</td>
+					<td><span id="StaffRow"></span></td>
+				</tr>
+				<tr>
+					<td>store</td>
+					<td><span id="StoreRow"></span></td>
+				</tr>
+				<tr>
+					<td>payment</td>
+					<td><span id="PaymentRow"></span></td>
+				</tr>
+				<tr>
+					<td>rental</td>
+					<td><span id="RentalRow"></span></td>
+				</tr>
+				<tr>
+					<td>category</td>
+					<td><span id="CategoryRow"></span></td>
+				</tr>
+				<tr>
+					<td>filmCategory</td>
+					<td><span id="FilmCategoryRow"></span></td>
+				</tr>
+				<tr>
+					<td>film</td>
+					<td><span id="FilmRow"></span></td>
+				</tr>
+				<tr>
+					<td>language</td>
+					<td><span id="LanguageRow"></span></td>
+				</tr>
+				<tr>
+					<td>actor</td>
+					<td><span id="ActorRow"></span></td>
+				</tr>
+				<tr>
+					<td>filmActor</td>
+					<td><span id="FilmActorRow"></span></td>
+				</tr>
+				<tr>
+					<td>inventory</td>
+					<td><span id="InventoryRow"></span></td>
+				</tr>
+				<tr>
+					<td>filmText</td>
+					<td><span id="FilmTextRow"></span></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+	// aside.html include
+	$("#aside").load("/sakila/aside.html");
+</script>
+<script>
+	$.ajax({
+		url : "/sakila/indexController",
+		method : "POST",
+		success : function(json){
+			console.log(json);
+			$("#CountryRow").text(json.countryRow); // .text(), val(), html()
+			$("#CityRow").text(json.cityRow);
+			$("#AddressRow").text(json.addressRow);
+			$("#CustomerRow").text(json.customerRow);
+			$("#StaffRow").text(json.staffRow);
+			$("#StoreRow").text(json.storeRow);
+			$("#PaymentRow").text(json.paymentRow);
+			$("#RentalRow").text(json.rentalRow);
+			$("#CategoryRow").text(json.categoryRow);
+			$("#FilmCategoryRow").text(json.filmCategoryRow);
+			$("#FilmRow").text(json.filmRow);
+			$("#LanguageRow").text(json.languageRow);
+			$("#ActorRow").text(json.actorRow);
+			$("#FilmActorRow").text(json.filmActorRow);
+			$("#InventoryRow").text(json.inventoryRow);
+			$("#FilmTextRow").text(json.filmTextRow);
+		}
+	});
+</script>
+</html>
