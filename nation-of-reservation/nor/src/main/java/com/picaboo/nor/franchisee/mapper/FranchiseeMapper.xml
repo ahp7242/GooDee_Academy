@@ -1,0 +1,750 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.picaboo.nor.franchisee.mapper.FranchiseeMapper">
+
+	<!-- seat 테이블에 use를 UPDATE 수행 Y로 업데이트  -->
+	<update id="cancelUpdateSeatReservation" parameterType="com.picaboo.nor.franchisee.vo.FranchiseeQnA">
+	<![CDATA[
+		UPDATE seat
+		SET 
+		seat_use = 'N'
+		WHERE franchisee_no = #{franchiseeNo} AND seat_no = #{seatNo}
+	]]>
+	</update>
+	
+	<!-- del_seat_reservation 테이블에 INSERT 수행  -->
+	<insert id="cancelInsertSeatReservation" parameterType="com.picaboo.nor.franchisee.vo.FranchiseeQnA">
+	<![CDATA[
+		INSERT INTO cancel_seat_reservation
+			(
+			franchisee_no,
+			seat_no,
+			customer_no,
+			customer_name,
+			reservation_date)
+		SELECT 
+			franchisee_no,
+			seat_no,
+			customer_no,
+			customer_name,
+			reservation_date
+		FROM seat_reservation
+		WHERE seat_no = #{seatNo}
+	]]>
+	</insert>
+	<!-- seat 테이블에 use를 UPDATE 수행 Y로 업데이트  -->
+	<update id="updateSeatReservation" parameterType="com.picaboo.nor.franchisee.vo.FranchiseeQnA">
+	<![CDATA[
+		UPDATE seat
+		SET 
+		seat_use = 'Y'
+		WHERE franchisee_no = #{franchiseeNo} AND seat_no = #{seatNo}
+	]]>
+	</update>
+	
+	<!-- del_seat_reservation 테이블에 INSERT 수행  -->
+	<insert id="insertSeatReservation" parameterType="com.picaboo.nor.franchisee.vo.FranchiseeQnA">
+	<![CDATA[
+		INSERT INTO del_seat_reservation
+			(
+			franchisee_no,
+			seat_no,
+			customer_no,
+			customer_name,
+			reservation_date)
+		SELECT 
+			franchisee_no,
+			seat_no,
+			customer_no,
+			customer_name,
+			reservation_date
+		FROM seat_reservation
+		WHERE seat_no = #{seatNo}
+	]]>
+	</insert>
+	
+	<!-- QnA 상세보기 -->
+	<select id="selectQnaDetail" resultType="com.picaboo.nor.franchisee.vo.FranchiseeQnA" parameterType="int">
+	<![CDATA[
+		
+		SELECT 
+			customer_no as customerNo,
+			qna_type as qnaType,
+			qna_title as qnaTitle,
+			qna_question as qnaQuestion,
+			qna_answer as qnaAnswer,
+			qna_date as qnaDate,
+			customer_mail as customerMail
+			
+		FROM franchisee_qna
+		WHERE qna_no = #{qnaNo}
+		
+	]]>   
+	</select>
+	
+	<!-- 주소 입력 -->
+	<insert id="insertAddress" parameterType="com.picaboo.nor.membership.vo.Address" useGeneratedKeys="true" keyProperty="addressNo">
+	<![CDATA[
+		INSERT INTO address (
+			road_address,
+			jibun_address,
+			detail_address,
+			postcode
+		) VALUES(
+			#{roadAddress},
+			#{jibunAddress},
+			#{detailAddress},
+			#{postcode}
+		)
+	]]>
+	</insert>
+
+	<!--좌석 예약 취소 -->
+	<delete id="delSeatReservation" parameterType="com.picaboo.nor.franchisee.vo.SeatReservationList">
+    <![CDATA[
+      DELETE
+		FROM seat_reservation
+		WHERE franchisee_no = #{franchiseeNo} AND seat_no = #{seatNo}
+    ]]>
+    </delete>
+    
+	<!-- 좌석 예약 리스트 조회 -->
+	<select id="selectSeatReservationList" parameterType="string" resultType="com.picaboo.nor.franchisee.vo.SeatReservationList">
+	<![CDATA[
+		SELECT
+			franchisee_no as franchiseeNo,
+			seat_no as seatNo,
+			customer_no as customerNo,
+			customer_name as customerName,
+			reservation_date as reservationDate
+		FROM seat_reservation
+		WHERE franchisee_no = #{franchiseeNo}
+		
+	]]>   
+	
+	</select>
+		
+	<!-- 가맹점별 상품에 따른 매출 현황 -->
+	<select id="selectTotalStatementList" parameterType="string" resultType="com.picaboo.nor.franchisee.vo.TotalStatement">
+	<![CDATA[	
+		SELECT 
+			fs.franchisee_no as franchiseeNo, 
+			fd.food_name as foodName, 
+			fr.reservation_count as count,
+			SUM(food_price * reservation_count) as totalCount
+		FROM del_food_reservation fr
+		INNER JOIN food fd
+		INNER JOIN franchisee fs
+		ON fr.food_no= fd.food_no
+		AND fd.franchisee_no = fs.franchisee_no
+		WHERE fs.owner_no = #{ownerNo}
+		GROUP BY fd.franchisee_no, fr.food_no
+	]]>
+	</select>	
+	
+	<!-- 오늘의 가맹점별 매출 현황 -->
+	<select id="selectTodayStatementList" parameterType="string" resultType="com.picaboo.nor.franchisee.vo.TodayStatement">
+	<![CDATA[	
+		SELECT
+		fs.franchisee_name as franchiseeNo, 
+		SUM(food_price * reservation_count) as totalCount
+	FROM del_food_reservation fr
+	INNER JOIN food fd
+	INNER JOIN franchisee fs
+	ON fr.food_no= fd.food_no
+	AND fd.franchisee_no = fs.franchisee_no
+	WHERE DATE_FORMAT(fr.reservation_date, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
+	AND fs.owner_no = #{ownerNo}
+	GROUP BY fs.franchisee_no
+	]]>
+	</select>
+
+	<!-- 모든 상품 예약 통계 -->
+	<select id="selectFoodfoodStatementList" resultType="com.picaboo.nor.franchisee.vo.FoodStatement">
+	<![CDATA[
+		SELECT
+			f.food_name AS foodName,
+			SUM(d.reservation_count) AS reservationCount
+			FROM del_food_reservation AS d
+		INNER JOIN food AS f 
+		ON d.food_no = f.food_no 
+		GROUP BY d.food_no
+		ORDER BY reservationCount DESC
+	]]>   
+	</select>
+
+
+	<!-- 가맹점 상품 수정 -->
+	<update id="updateFranchiseeFood" parameterType="com.picaboo.nor.franchisee.vo.Food">
+	<![CDATA[
+		UPDATE food
+		SET 
+			food_name = #{foodName},
+			food_category = #{foodCategory},
+			food_price = #{foodPrice}
+		WHERE food_no = #{foodNo}
+	]]>
+	</update>
+
+	<!-- food와 연결된 franchisee의 franchiseeNo 매핑 -->
+	<resultMap type="com.picaboo.nor.franchisee.vo.Food" id="foodResultMap">
+		<id column="food_no" property="foodNo"/>
+		<result column="food_name" property="foodName"/>
+		<result column="food_category" property="foodCategory"/>
+		<result column="food_price" property="foodPrice"/>
+		<association property="franchisee" javaType="com.picaboo.nor.franchisee.vo.Franchisee">
+			<id column="franchisee_no" property="franchiseeNo"/>
+		</association>
+	</resultMap>
+
+	<!-- 가맹점 상품 조회 -->
+	<select id="selectFood" parameterType="int" resultMap="foodResultMap">
+	<![CDATA[
+		SELECT
+			food_no,
+			franchisee_no,
+			food_name,
+			food_category,
+			food_price
+		FROM food
+		WHERE food_no = #{foodNo}
+	]]>
+	</select>
+	<!-- 가맹점 상품 사진 파일 조회 -->
+	<select id="selectFoodPic" parameterType="int" resultType="com.picaboo.nor.franchisee.vo.FoodPic">
+	<![CDATA[
+		SELECT
+			food_no as foodNo,
+			file_name as fileName,
+			extension as extension,
+			content_type as contentType,
+			size as size,
+			origin_name as originName
+		FROM food_pic
+		WHERE food_no = #{foodNo}
+	]]>
+	</select>
+	<!-- 가맹점 상품  사진 삭제 -->
+	<delete id="deletefranchiseeFoodPic" parameterType="int">
+	<![CDATA[
+		DELETE 
+		FROM food_pic
+		WHERE food_no = #{foodNo}
+	]]>
+	</delete>
+
+	<!-- 가맹점 상품 삭제 -->
+	<delete id="deletefranchiseeFood" parameterType="int">
+	<![CDATA[
+		DELETE 
+		FROM food
+		WHERE food_no = #{foodNo}
+	]]>
+	</delete>
+
+	<!--food 통계 계수 추가-->
+	<insert id="addFoodReservation" parameterType="int">
+	<![CDATA[
+		INSERT INTO del_food_reservation
+			(
+			food_reservation_no,
+			food_no,
+			reservation_count,
+			reservation_date,
+			customer_no,
+			customer_name)
+		SELECT 
+			food_reservation_no,
+			food_no,
+			reservation_count,
+			reservation_date,
+			customer_no,
+			customer_name
+		FROM food_reservation
+		
+		WHERE food_reservation_no = #{reservationNo}
+	]]>
+	</insert>
+	
+	<!--주문완료 상품 삭제 -->
+	<delete id="delFoodReservation" parameterType="int">
+    <![CDATA[
+      DELETE
+		FROM food_reservation
+		WHERE food_reservation_no = #{reservationNo}
+    ]]>
+    </delete>
+    
+    <!--food 통계 계수 추가-->
+	<insert id="addFoodReservationCancel" parameterType="int">
+	<![CDATA[
+		INSERT INTO cancel_food_reservation
+			(
+			food_reservation_no,
+			food_no,
+			reservation_count,
+			reservation_date,
+			customer_no,
+			customer_name)
+		SELECT 
+			food_reservation_no,
+			food_no,
+			reservation_count,
+			reservation_date,
+			customer_no,
+			customer_name
+		FROM food_reservation
+		
+		WHERE food_reservation_no = #{reservationNo}
+	]]>
+	</insert>
+	
+	<!--주문취소 상품 삭제 -->
+	<delete id="delFoodReservationCancel" parameterType="int">
+    <![CDATA[
+      DELETE
+		FROM food_reservation
+		WHERE food_reservation_no = #{reservationNo}
+    ]]>
+    </delete>   
+    
+	<!-- 상품 예약 리스트 조회 -->
+	<select id="selectFoodReservationList" parameterType="string" resultType="com.picaboo.nor.franchisee.vo.FoodReservationList">
+	<![CDATA[
+		SELECT
+		    r.food_reservation_no as reservationNo,
+			r.food_no as foodNo,
+			r.reservation_count as reservationCount,
+			r.customer_no as customerNo,
+			r.customer_name as customerName,
+			r.reservation_date as reservationDate
+			FROM food AS f             
+        INNER JOIN food_reservation AS r       
+		ON f.food_no = r.food_no  
+		WHERE f.franchisee_no = #{franchiseeNo}
+
+	]]>   
+	
+	</select>
+	<!-- 가맹점 상품 사진 리스트 조회 --> 
+	<select id="selectFoodPicList" parameterType="string" resultType="com.picaboo.nor.franchisee.vo.FoodPic">
+	<![CDATA[
+		SELECT
+		food_no as foodNo,
+		file_name as fileName,
+		extension as extension,
+		content_type as contentType,
+		size as size,
+		origin_name as originName
+		FROM food_pic
+		WHERE food_no IN (
+							SELECT food_no
+							FROM food
+							WHERE franchisee_no = #{franchiseeNo}
+						)
+	]]>
+	</select>
+	
+	<!-- 가맹점 상품 리스트 조회 -->
+	<select id="selectFoodList" parameterType="string" resultType="com.picaboo.nor.franchisee.vo.Food">
+	<![CDATA[
+		SELECT
+			food_no as foodNo,
+			food_name as foodName,
+			food_category as foodCategory,
+			food_price as foodPrice
+		FROM food
+	]]>
+		<where>
+			<if test="franchiseeNo != null">
+			<![CDATA[
+				franchisee_no = #{franchiseeNo}
+			]]>
+			</if>
+			<if test="foodCategory != null">
+			<![CDATA[
+				AND food_category = #{foodCategory}
+			]]>
+			</if>		
+		</where>
+	</select>
+	<!-- 가맹점 상품 사진 등록 -->
+	<insert id="insertFranchiseeFoodPic" parameterType="com.picaboo.nor.franchisee.vo.FoodPic">
+	<![CDATA[
+		INSERT INTO food_pic (
+			food_no,
+			file_name,
+			extension,
+			content_type,
+			size,
+			origin_name
+		) VALUES(
+			#{foodNo},
+			#{fileName},
+			#{extension},
+			#{contentType},
+			#{size},
+			#{originName}
+		)		
+	]]>
+	</insert>
+	
+	<!-- 가맹점 상품 등록 -->
+	<insert id="insertFranchiseeFood" parameterType="com.picaboo.nor.franchisee.vo.Food" useGeneratedKeys="true" keyProperty="foodNo">
+	<![CDATA[
+		INSERT INTO food (
+			food_no,
+			franchisee_no,
+			food_name,
+			food_category,
+			food_price
+		) VALUES(
+			#{foodNo},
+			#{franchisee.franchiseeNo},
+			#{foodName},
+			#{foodCategory},
+			#{foodPrice}
+		)		
+	]]>
+	</insert>
+
+	<!-- 고객문의 사항 상세확인가능 -->
+	<select id="selectFranchiseeQnaList" parameterType="string" resultType="com.picaboo.nor.franchisee.vo.FranchiseeQnA">
+	
+	<![CDATA[
+	   SELECT 
+	      qna_no as qnaNo,
+	      customer_no as customerNo,
+	      qna_type as qnaType,
+	      qna_title as qnaTitle,
+	      qna_question as qnaQuestion,
+	      qna_answer as qnaAnswer,
+	      qna_date as qnaDate
+	   FROM franchisee_qna
+	   WHERE customer_no = #{ownerNo}
+	]]>   
+	
+	</select>
+	   
+	<!-- 고객의 상세정보를 수정하는 매퍼 -->
+	<update id="updateFranchiseeOwner" parameterType="com.picaboo.nor.franchisee.vo.FranchiseeOwner">
+	<![CDATA[
+	  UPDATE customer SET 
+	     customer_name = #{customerName},
+	     customer_email = #{customerEmail},
+	     customer_phone = #{customerPhone}
+	  WHERE 
+	     customer_no = #{customerNo}
+	]]>
+	</update>
+   
+	<!-- 고객의 상세정보를 불러오는 매퍼 -->
+    <select id="selectFranchiseeOwner" parameterType="String" resultType="com.picaboo.nor.franchisee.vo.FranchiseeOwner">
+    <![CDATA[
+      SELECT  customer_no as customerNo,
+            customer_id as customerId,
+            customer_pw as customerPw,
+            customer_name as customerName,
+            customer_birth as customerBirth,
+            customer_gender as customerGender,
+            customer_email as customerEmail,
+            customer_phone as customerPhone,
+            customer_type as customerType
+      FROM customer
+      WHERE customer_no = #{String}
+    ]]>
+    </select>
+    
+	<!-- 가맹점 썸네일 사진 조회 -->
+	<select id="selectFranchiseeThumbnail" parameterType="string" resultType="com.picaboo.nor.franchisee.vo.FranchiseePic">
+	<![CDATA[
+		SELECT 
+			franchisee_no as FranchiseeNo,
+			pic_no as picNo,
+			file_name as fileName,
+			extension as extension,
+			content_type as contentType,
+			size as size,
+			origin_name as originName
+		FROM franchisee_pic
+		GROUP BY franchisee_no
+		HAVING MIN(pic_no)
+	]]>
+	</select>
+	<!-- 가맹점 사진 삭제 -->
+	<delete id="deleteFranchiseePic" parameterType="int"> 
+	<![CDATA[
+		DELETE
+		FROM franchisee_pic
+		WHERE pic_no = #{picNo}
+	]]>
+	</delete>
+	<!-- 사진 번호로 가맹점 사진 하나 조회 -->
+	<select id="selectFranchiseePicOne" parameterType="int" resultType="com.picaboo.nor.franchisee.vo.FranchiseePic">
+	<![CDATA[
+		SELECT
+			franchisee_no as franchiseeNo,
+			file_name as fileName,
+			extension as extension,
+			content_type as contentType,
+			size as size,
+			origin_name as originName
+		FROM franchisee_pic
+		WHERE pic_no = #{picNo}
+	]]>
+	</select>
+	
+	<!-- pc사양 수정 -->
+	<update id="updateFranchiseeSpec">
+	<![CDATA[
+		UPDATE franchisee_spec
+		SET
+			cpu = #{cpu},
+			vga = #{vga},
+			ram = #{ram}
+		WHERE franchisee_no = #{franchiseeNo}
+	]]>
+	</update>
+	
+	<!-- QnA 등록 -->
+	<insert id="insertFranchiseeQnA" parameterType="com.picaboo.nor.franchisee.vo.FranchiseeQnA">
+	<![CDATA[
+		INSERT INTO franchisee_qna(
+			customer_no,
+			qna_type,
+			qna_title,
+			qna_question,
+			qna_date,
+			customer_mail
+		) VALUES (
+			#{customerNo},
+			#{qnaType},
+			#{qnaTitle},
+			#{qnaQuestion},
+			NOW(),
+			#{customerMail}
+		)
+	]]>
+	</insert>
+
+	<!-- 사양 리스트 조회 -->
+	<select id="selectSpec" resultType="com.picaboo.nor.franchisee.vo.Spec" parameterType="string">
+	<![CDATA[
+		SELECT 
+			spec_no as specNo,
+			spec_name as specName
+		FROM spec
+		WHERE spec_type = #{specType}
+		ORDER BY spec_name
+	]]>   
+	</select>
+	<!-- FAQ 카운트 조회 -->
+	<select id="selectFranchiseeFAQCount" resultType="int" parameterType="string">
+	<![CDATA[
+		SELECT COUNT(*)
+		FROM franchisee_faq
+	]]>
+		<where>
+		   <if test="searchWord != null">
+		   <![CDATA[
+		      faq_title like CONCAT('%', #{searchWord}, '%')
+		   ]]>  
+		   </if>
+		</where>
+	</select>
+   
+	<!-- FAQ 리스트 출력 -->
+	<select id="selectFranchiseeFAQ"
+	      resultType="com.picaboo.nor.franchisee.vo.FranchiseeFAQ"
+	      parameterType="com.picaboo.nor.franchisee.vo.FranchiseeFAQPage">
+	<![CDATA[
+	   SELECT 
+	      faq_no as faqNo,
+	      faq_title as faqTitle,
+	      faq_content as faqContent
+	   FROM franchisee_faq
+	]]>
+	   <where>
+	      <if test="searchWord != null">
+	   	  <![CDATA[
+	         faq_title like CONCAT('%', #{searchWord}, '%')
+	      ]]>   
+	      </if>
+	   </where>
+	   <![CDATA[
+	   LIMIT #{beginRow}, #{rowPerPage}
+	   ]]>
+	</select>
+   
+	<!-- 가맹점 사진 조회 -->
+	<!-- 저장된 파일 이름, 확장명, 원래 파일 이름, 가맹점 번호 조회 -->
+	<select id="selectFranchiseePic" parameterType="string" resultType="com.picaboo.nor.franchisee.vo.FranchiseePic">
+	<![CDATA[
+		SELECT
+			pic_no as picNo,
+			franchisee_no as franchiseeNo,
+			file_name as fileName,
+			extension as extension,
+			origin_name as originName
+		FROM franchisee_pic
+		WHERE franchisee_no = #{franchiseeNo}
+	]]>
+	</select>
+	
+	<!-- 가맹점 pc사양 조회 -->
+	<select id="selelctFranchiseeSpec" parameterType="string" resultType="com.picaboo.nor.franchisee.vo.FranchiseeSpec">
+	<![CDATA[
+	   SELECT 
+	      franchisee_no as franchiseeNo,
+	      cpu as cpu,
+	      vga as vga,
+	      ram as ram
+	   FROM franchisee_spec
+	   WHERE franchisee_no = #{franchiseeNo}
+	]]>
+	</select>
+	
+	<!-- 가맹점 pc사양 입력 -->
+	<insert id="insertFranchiseeSpec" parameterType="com.picaboo.nor.franchisee.vo.FranchiseeSpec">
+	<![CDATA[
+	   INSERT INTO franchisee_spec(
+	      franchisee_no,
+	      cpu,
+	      vga,
+	      ram
+	   ) VALUES (
+	      #{franchiseeNo},
+	      #{cpu},
+	      #{vga},
+	      #{ram}
+	   )
+	]]>
+	</insert>
+	
+	<!-- 가맹점 사진 입력 -->
+	<insert id="insertFranchiseePic" parameterType="com.picaboo.nor.franchisee.vo.FranchiseePic">
+	<![CDATA[
+	   INSERT INTO franchisee_pic (
+	      franchisee_no,
+	      file_name,
+	      extension,
+	      content_type,
+	      size,
+	      origin_name
+	   ) VALUES(
+	      #{franchiseeNo},
+	      #{fileName},
+	      #{extension},
+	      #{contentType},
+	      #{size},
+	      #{originName}
+	   )
+	]]>   
+	</insert>
+	
+	<!-- 가맹점 좌석 삭제 -->
+	<delete id="deleteSeat" parameterType="com.picaboo.nor.franchisee.vo.Franchisee">
+	<![CDATA[
+	     DELETE FROM seat
+	     WHERE franchisee_no = #{franchiseeNo}
+	]]>   
+	</delete>
+	
+	<!-- 가맹점 좌석정보 조회 -->
+	<select id="selectSeat" parameterType="string" resultType="com.picaboo.nor.franchisee.vo.Seat">
+	<![CDATA[
+	   SELECT 
+	      seat_no as seatNo,
+	      seat_row as seatRow,
+	      seat_cols as seatCols,
+	      seat_use as   seatUse   
+	   FROM seat
+	   WHERE franchisee_no = #{franchiseeNo}
+	]]>   
+	</select>
+	
+	<!-- 가맹점 상세정보 조회 -->
+	<select id="selectFranchiseeOne" parameterType="string" resultType="com.picaboo.nor.franchisee.vo.Franchisee">
+	<![CDATA[
+	   SELECT 
+	      franchisee_no as franchiseeNo,
+	      franchisee_crn as franchiseeCrn,
+	      franchisee_name as franchiseeName,
+	      franchisee_phone as franchiseePhone,
+	      owner_no as ownerNo
+	   FROM franchisee
+	   WHERE franchisee_no = #{franchiseeNo}
+	]]>   
+	</select>
+	
+	<!-- 로그인한 점주의 가맹점 리스트 조회 -->
+	<select id="selectFranchiseeList" parameterType="string" resultType="com.picaboo.nor.franchisee.vo.Franchisee">
+	<![CDATA[
+	   SELECT 
+	      franchisee_no as franchiseeNo,
+	      franchisee_name as franchiseeName
+	   FROM franchisee
+	   WHERE owner_no = #{owner_no}
+	]]>   
+	</select>
+	
+	<!-- 점주가 선택한 자리의 값들을 seat db에 저장 -->
+	<!-- 좌석 입력 -->
+	<insert id="insertFranchiseeSeat" parameterType="com.picaboo.nor.franchisee.vo.Seat" >
+	<![CDATA[
+	   INSERT INTO seat(
+	      seat_no, 
+	      seat_row, 
+	      seat_cols,
+	      franchisee_no
+	   ) VALUES(
+	      #{seatNo}, 
+	      #{seatRow}, 
+	      #{seatCols},
+	      #{franchisee.franchiseeNo}
+	   )
+	]]>
+	</insert>
+	
+	<!-- 가맹점 등록 -->
+	<insert id="insertUnverifiedFranchisee" parameterType="com.picaboo.nor.franchisee.vo.UnverifiedFranchisee" >
+	<![CDATA[
+	   INSERT INTO unverified_franchisee(
+	      franchisee_no, 
+	      franchisee_crn, 
+	      franchisee_name,
+	      franchisee_phone,
+	      owner_no,
+	      address_no
+	   ) VALUES(
+	      #{franchiseeNo},
+	      #{franchiseeCrn}, 
+	      #{franchiseeName},
+	      #{franchiseePhone},
+	      #{ownerNo},
+	      #{address.addressNo}
+	   )
+	]]>
+	</insert>
+	
+	<!-- 마지막 가맹점번호 조회 -->
+	<select id="selectFranchiseeSeq" resultType="string">
+	<![CDATA[
+	   SELECT seq_no
+	   FROM franchisee_seq
+	   LIMIT 1;
+	]]>
+	</select>
+	
+	<!-- 마지막 가맹점번호 갱신 -->
+	<update id="updateFranchiseeSeq" parameterType="string">
+	<![CDATA[
+	   UPDATE franchisee_seq
+	   SET seq_no = #{seqNo}
+	]]>
+	</update>
+   
+</mapper>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<style>
+#logo {
+	text-align: center;
+	height: 170px;
+}
+
+.gradation {
+	background: linear-gradient(to right bottom, #B96BC6, #FE5196);
+}
+
+.zoom {
+	transition: transform .2s; /* Animation */
+	margin: 0 auto;
+}
+
+.zoom:hover {
+	transform: scale(1.03);
+	box-shadow: 10px 10px 5px grey;
+	/* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+
+#add{
+	text-align:right;
+}
+</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Franchisee Index</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="css/heroic-features.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<!-- Navigation -->
+  <div th:fragment="nav">
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="/franchiseeIndex">PI-CA-BOO</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+        
+          <!-- 로그아웃 -->
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">logout</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/mypageFranchisee">MyPage</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+   </nav>
+  </div>
+  
+  <!-- 수정가능 테이블 -->
+  <div class="container">
+  	<div class="low">
+	<form action="/modifyFranchiseeOwner" method="post">
+		<table class="table table-boardered">
+			<tr>
+				<th>아이디</th>
+				<td><input type="text" name="customerId" class="form-control" th:value="${franchiseeNo}" th:placeholder="${franchiseeOwner.customerId}" readonly="readonly" ></td>
+			</tr>
+			<tr>
+				<th>이름</th>
+				<td><input type="text" name="customerName" class="form-control" th:value="${franchiseeOwner.customerName}"></td>
+			</tr>
+			<tr>
+				<th>생일</th>
+				<td><input type="date" name="customerBirth" class="form-control" th:value="${franchiseeOwner.customerBirth}" readonly="readonly"></td>
+			</tr>
+			<tr>
+				<th>이메일</th>
+				<td><input type="email" name="customerEmail" class="form-control" th:value="${franchiseeOwner.customerEmail}"></td>
+			</tr>
+			<tr>
+				<th>번호</th>
+				<td><input type="text" name="customerPhone" class="form-control" th:value="${franchiseeOwner.customerPhone}"></td>
+			</tr>
+		</table>
+		<button type="submit" class="btn btn-primary" id="modifyFranchiseeMypage">수정</button>
+	</form>
+	</div>
+
+	<header class="jumbotron my-4">
+	<div class="container" style="padding: 10px;">
+		<h3>QnA 리스트</h3>
+		<hr>
+		<div class="row text-center">
+			<div class="col-lg-3 col-md-6 mb-4" th:each="list:${franchiseeQnaList}">
+				<div class="card h-100 zoom">
+					<div class="card-body">
+						<h4 class="card-title" id="qnaNo" th:text="${list.qnaNo}" hidden="hidden"></h4>
+						<h4 class="card-title" th:text="${list.qnaTitle}"></h4>
+						<h4 class="card-title" th:text="${list.qnaType}"></h4>
+						<h4 class="card-title" th:text="${list.qnaDate}"></h4>
+						<h6 th:if="${list.qnaAnswer} == null" class="card-title text-danger" th:text="답변대기"></h6>
+						<h6 th:unless="${list.qnaAnswer} == null" class="card-title text-primary" th:text="답변완료"></h6>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr>
+	</div>
+	    
+    </header>
+  </div>
+  <!-- Footer -->
+  <div th:fragment="copyright">
+	  <footer class="py-5 bg-dark">
+	    <div class="container">
+	      <p class="m-0 text-center text-white">Copyright &copy; PICABOO 2019</p>
+	    </div>
+	    <!-- /.container -->
+	  </footer>
+  </div>
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script>
+	$("#modifyFranchiseeMypage").click(function(){
+	 alert("수정이 완료되었습니다.");
+	});
+	
+	$(document).ready(function(){
+		$(".zoom").on("click",function(){
+			let qnaNo = $(this).children().children("#qnaNo").text()
+			console.log(qnaNo)
+			$(location).attr('href',"/QnAFranchiseeDetail?qnaNo="+qnaNo);
+		})
+	})
+	
+  </script>
+	
+</body>
+
+</html>

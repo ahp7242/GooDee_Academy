@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Add Franchisee Info</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="css/heroic-features.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<!-- Navigation -->
+  <div th:fragment="nav">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="/franchiseeIndex">PI-CA-BOO</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+        
+      	  <li class="nav-item">
+            <label class="nav-link" th:text="${memberName}"></label>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" href="/addFranchisee" >addFranchisee</a>
+          </li>
+          <!-- 로그아웃 -->
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">logout</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/#">modify</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+   </div>
+  <!-- Page Content -->
+  <div class="container jumbotron my-4">
+  	<h4>가맹점 상세 정보 수정	</h4>
+		<form action="/modifyFranchiseeInfo" method="post" enctype="multipart/form-data">
+			<div>
+				<input type="hidden" th:value="${franchiseeNo}" name="franchiseeNo">
+			</div>
+			<div class="form-group">
+		      <label for="sel1">Select CPU list:</label>
+		      <select class="form-control" id="cpu" name="cpu" >
+		        <option th:each="item : ${spec.cpu}" th:text="${item.specName}" th:selected="${item.specName == franchiseeInfo.franchiseeSpec.cpu}"></option>
+		      </select>
+			</div>
+			<div class="form-group">
+		      <label for="sel1">Select VGA list:</label>
+		      <select class="form-control" id="vga" name="vga" >
+		        <option th:each="item : ${spec.vga}" th:text="${item.specName}" th:selected="${item.specName == franchiseeInfo.franchiseeSpec.vga}"></option>
+		      </select>
+			</div>
+			<div class="form-group">
+		      <label for="sel1">Select RAM list:</label>
+		      <select class="form-control" id="ram" name="ram">
+		        <option th:each="item : ${spec.ram}" th:text="${item.specName}" th:selected="${item.specName == franchiseeInfo.franchiseeSpec.ram}"></option>
+		      </select>
+			</div>
+				
+			<div class="form-group">
+				<label for="franchiseePic">franchiseePic:</label> 
+				<input multiple="multiple" type="file" class="form-control" id="franchiseePic" placeholder="Enter Pictures" name="franchiseePicList" >
+			</div>
+			<!-- 업로드 된 사진 보기 -->
+			<h4>이전 사진</h4>
+			<div class="row">
+	      	  <div th:each="pic : ${franchiseeInfo.franchisePicList}">
+		        <div>
+		        
+            	  <div>
+            	  	<img th:src="${franchiseeInfo.uploadPath}+ '/' +${pic.fileName}" th:alt-title="${pic.originName}" width="200" height="200">
+            	  </div>
+            	  <!-- 삭제 요청 체크박스 -->
+            	  <div>
+            	  	<label for="fileDelCheckBox">remove file: </label>
+            	  	<input type="checkbox" name="removeFileList" th:value="${pic.picNo}">
+            	  </div>
+            	  
+		        </div>
+	    	  </div>
+	        </div>
+	        <!-- 전체 선택 -->
+	      	<button type="button" id="checkAll" class="btn btn-outline-secondary">전체 선택/해제</button>
+	        <br><br>
+			<button id="addButton" type="submit" class="btn btn-primary">입력</button>
+		</form>
+
+	</div>
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <div th:fragment="copyright">
+	  <footer class="py-5 bg-dark">
+	    <div class="container">
+	      <p class="m-0 text-center text-white">Copyright &copy; PICABOO 2019</p>
+	    </div>
+	    <!-- /.container -->
+	  </footer>
+  </div>
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script>
+	  $(document).ready(function(){
+		    //전체 선택 해제 버튼 클릭
+		    $("#checkAll").click(function(){
+		 		if($("input[name=removeFileList]").is(":checked")) {
+		 			$("input[name=removeFileList]").prop("checked", false);
+		 		}else {
+		 			$("input[name=removeFileList]").prop("checked", true);
+		 		}
+		    });
+		});
+  </script>
+</body>
+
+</html>

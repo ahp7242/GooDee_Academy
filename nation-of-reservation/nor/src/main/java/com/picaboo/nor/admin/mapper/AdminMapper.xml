@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.picaboo.nor.admin.mapper.AdminMapper">
+<!-- QnA 상세정보를 수정하는 매퍼 1고객 -->
+	<update id="updateQnACustomer" parameterType="com.picaboo.nor.admin.vo.AdminQnA">
+	<![CDATA[
+	  UPDATE customer_qna SET 
+	     qna_answer = #{qnaAnswer}
+	  WHERE 
+	     qna_no = #{qnaNo}
+	]]>
+	</update>
+	<!-- QnA 상세정보 조회 2고객-->
+	<select id="selectQnAOneCustomer" parameterType="int" resultType="com.picaboo.nor.admin.vo.AdminQnA">
+	<![CDATA[
+	   SELECT 
+	    qna_no as qnaNo,
+		customer_no as customerNo,
+		qna_type as qnaType,
+		qna_title as qnaTitle,
+		qna_question as qnaQuestion,
+		qna_answer as qnaAnswer,
+		qna_date as qnaDate,
+		customer_mail as customerMail
+	   FROM customer_qna
+	   WHERE qna_no = #{qnaNo}
+	]]>   
+	</select>
+	
+	<!-- QnA 카운트 조회 3고객-->
+	<select id="selectAdminQnACountCustomer" resultType="int" parameterType="string">
+	<![CDATA[
+		SELECT COUNT(*)
+		FROM customer_qna
+	]]>	
+	</select>
+   
+	<!-- QnA 리스트 출력 4고객-->
+	<select id="selectAdminQnACustomer"
+	      resultType="com.picaboo.nor.admin.vo.AdminQnA"
+	      parameterType="com.picaboo.nor.admin.vo.AdminQnAPage">
+	<![CDATA[
+	   SELECT 
+		qna_no as qnaNo,
+		customer_no as customerNo,
+		qna_type as qnaType,
+		qna_title as qnaTitle,
+		qna_question as qnaQuestion,
+		qna_answer as qnaAnswer,
+		qna_date as qnaDate
+	   FROM customer_qna
+	   LIMIT #{beginRow}, #{rowPerPage}
+	   ]]>
+	</select>	
+
+	<!-- 가맹점 등록 -->
+	<insert id="insertFranchisee" parameterType="string">
+	<![CDATA[
+		INSERT INTO franchisee
+			(
+			franchisee_no,
+			franchisee_crn,
+			franchisee_name,
+			franchisee_phone,
+			owner_no)
+		SELECT 
+			franchisee_no,
+			franchisee_crn,
+			franchisee_name,
+			franchisee_phone,
+			owner_no
+		FROM unverified_franchisee
+		
+		WHERE franchisee_no = #{franchiseeNo}
+	]]>
+	</insert>
+	<!-- 신청완료 가맹점 삭제 -->
+	<delete id="delFranchisee" parameterType="string">
+   <![CDATA[
+      DELETE FROM unverified_franchisee
+      WHERE franchisee_no = #{franchiseeNo}
+   ]]>
+   </delete>	
+	<!-- 가맹점 카운트 조회 -->
+	<select id="selectFranchiseeCount" resultType="int" parameterType="string">
+	<![CDATA[
+		SELECT COUNT(*)
+		FROM unverified_franchisee
+	 ]]>  
+	</select>
+   
+	<!-- 가맹점 신청 리스트 출력 -->
+	<select id="selectUnverifiedFranchiseeList"
+	      resultType="com.picaboo.nor.admin.vo.UnverifiedFranchisee"
+	      parameterType="com.picaboo.nor.admin.vo.AdminPage">
+	<![CDATA[
+	   SELECT 
+	      franchisee_no as franchiseeNo,
+		  franchisee_crn as franchiseeCrn,
+		  franchisee_name as franchiseeName,
+		  franchisee_phone as franchiseePhone,
+		  owner_no as ownerNo
+	      
+	   FROM unverified_franchisee
+	   LIMIT #{beginRow}, #{rowPerPage}
+	   ]]>
+	</select>
+
+
+	<!-- FAQ 삭제 -->
+	<delete id="deleteFAQ" parameterType="int">
+   <![CDATA[
+      DELETE FROM franchisee_faq
+      WHERE faq_no = #{faqNo}
+   ]]>
+   </delete>
+   
+	<!-- FAQ 등록 -->
+	<insert id="insertFAQ" parameterType="com.picaboo.nor.admin.vo.AdminFAQ">
+	<![CDATA[
+		INSERT INTO franchisee_faq(
+			faq_title,
+			faq_content
+		) VALUES (
+			#{faqTitle},
+			#{faqContent}
+		)
+	]]>
+	</insert>
+
+	<!-- FAQ 카운트 조회 -->
+	<select id="selectAdminFAQCount" resultType="int" parameterType="string">
+	<![CDATA[
+		SELECT COUNT(*)
+		FROM franchisee_faq
+	]]>
+		<where>
+		   <if test="searchWord != null">
+		   <![CDATA[
+		      faq_title like CONCAT('%', #{searchWord}, '%')
+		   ]]>  
+		   </if>
+		</where>
+	</select>
+   
+	<!-- FAQ 리스트 출력 -->
+	<select id="selectAdminFAQ"
+	      resultType="com.picaboo.nor.admin.vo.AdminFAQ"
+	      parameterType="com.picaboo.nor.admin.vo.AdminFAQPage">
+	<![CDATA[
+	   SELECT 
+	      faq_no as faqNo,
+	      faq_title as faqTitle,
+	      faq_content as faqContent
+	   FROM franchisee_faq
+	]]>
+	   <where>
+	      <if test="searchWord != null">
+	   	  <![CDATA[
+	         faq_title like CONCAT('%', #{searchWord}, '%')
+	      ]]>   
+	      </if>
+	   </where>
+	   <![CDATA[
+	   LIMIT #{beginRow}, #{rowPerPage}
+	   ]]>
+	</select>
+	
+	<!-- QnA 상세정보를 수정하는 매퍼 -->
+	<update id="updateQnA" parameterType="com.picaboo.nor.admin.vo.AdminQnA">
+	<![CDATA[
+	  UPDATE franchisee_qna SET 
+	     qna_answer = #{qnaAnswer}
+	  WHERE 
+	     qna_no = #{qnaNo}
+	]]>
+	</update>
+	<!-- QnA 상세정보 조회 -->
+	<select id="selectQnAOne" parameterType="int" resultType="com.picaboo.nor.admin.vo.AdminQnA">
+	<![CDATA[
+	   SELECT 
+	    qna_no as qnaNo,
+		customer_no as customerNo,
+		qna_type as qnaType,
+		qna_title as qnaTitle,
+		qna_question as qnaQuestion,
+		qna_answer as qnaAnswer,
+		qna_date as qnaDate,
+		customer_mail as customerMail
+	   FROM franchisee_qna
+	   WHERE qna_no = #{qnaNo}
+	]]>   
+	</select>
+	
+	<!-- QnA 카운트 조회 -->
+	<select id="selectAdminQnACount" resultType="int" parameterType="string">
+	<![CDATA[
+		SELECT COUNT(*)
+		FROM franchisee_qna
+	]]>	
+	</select>
+   
+	<!-- QnA 리스트 출력 -->
+	<select id="selectAdminQnA"
+	      resultType="com.picaboo.nor.admin.vo.AdminQnA"
+	      parameterType="com.picaboo.nor.admin.vo.AdminQnAPage">
+	<![CDATA[
+	   SELECT 
+		qna_no as qnaNo,
+		customer_no as customerNo,
+		qna_type as qnaType,
+		qna_title as qnaTitle,
+		qna_question as qnaQuestion,
+		qna_answer as qnaAnswer,
+		qna_date as qnaDate
+	   FROM franchisee_qna
+	   LIMIT #{beginRow}, #{rowPerPage}
+	   ]]>
+	</select>
+	
+	<!-- FeedBack 등록 -->
+	<insert id="insertFeedBack" parameterType="com.picaboo.nor.admin.vo.FeedBack">
+		<![CDATA[
+			INSERT INTO feedback( 
+				feedback_board_title,
+				feedback_board_content,
+				feedback_board_date
+			) VALUES (			
+				#{feedBackBoardTitle},
+				#{feedBackBoardContent},
+				NOW()
+			)		
+		]]>
+	</insert>
+	
+	<!-- FeedBack 리스트 출력 -->
+	<select id="selectFeedBackBoardList"
+			resultType="com.picaboo.nor.admin.vo.FeedBack"
+			parameterType="com.picaboo.nor.admin.vo.FeedBackPage">
+		<![CDATA[
+			SELECT
+				feedback_board_no as feedBackBoardNo, 
+				feedback_board_title as feedBackBoardTitle, 
+				feedback_board_content as feedBackBoardContent,
+				feedback_board_date as feedBackBoardDate
+			FROM feedback
+			ORDER BY feedback_board_date DESC
+			LIMIT #{beginRow}, #{rowPerPage}
+		]]>
+	</select>
+	
+	<!-- FeedBack 카운트 조회 -->
+	<select id="selectFeedBackBoardListCount" resultType="int" parameterType="string">
+	<![CDATA[
+		SELECT COUNT(*)
+		FROM feedback
+	]]>	
+	</select>
+	
+	<!-- FeedBack 리스트 상세정보 조회 -->
+	<select id="selectFeedBackBoardListOne" parameterType="int" resultType="com.picaboo.nor.admin.vo.FeedBack">
+		<![CDATA[
+			SELECT 
+				feedback_board_no as feedBackBoardNo, 
+				feedback_board_title as feedBackBoardTitle, 
+				feedback_board_content as feedBackBoardContent,
+				feedback_board_date as feedBackBoardDate
+			FROM feedback
+			WHERE feedback_board_no = #{feedBackBoardNo}
+		]]>   
+	</select>
+</mapper>

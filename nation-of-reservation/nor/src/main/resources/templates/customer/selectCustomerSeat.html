@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="">
+<meta name="author" content="">
+<!-- Bootstrap core CSS -->
+<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<title>CUSTOMER</title>
+<link rel="stylesheet" href="/css/menumodal.css">
+<link rel="stylesheet" href="/css/seatmodal.css">
+<link rel="stylesheet" href="/css/thumnailmodal.css">
+<style>
+#logo {
+	padding-top:54px;
+	text-align: center;
+	height:226px;
+}
+.gradation {
+	background: linear-gradient(to right bottom, #B96BC6, #FE5196);
+}
+.box {
+	height: 50px;
+	width: 50px;
+	text-align: center;
+	border: 1px solid black;
+	border-radius: 5px;
+}
+.center {
+	width: 100%;
+	text-align: center;
+}
+#seat {
+	margin-left: auto;
+	margin-right: auto;
+}
+#seat div {
+	background-color: #EAEAEA;
+}
+.close {
+	font-size: 15px;
+}
+</style>
+</head>
+<body>
+<div id="logo" >		
+	<img src="/loginimage/logo.jpg">
+</div>
+	<div th:include="/part/customerNav::afternav" class="gradation"></div>
+	<div class="container center">
+		<h1>CustomerSeat</h1>
+		<div style="height:50px" th:text="${franchisee.franchiseeName}"></div>
+
+		<!-- 이미지 클릭시 모달창 오픈 -->
+		<div class="picmodal_link">
+			<!-- 썸네일  -->
+		</div>
+		<!--모달창 내용 -->
+		<div id="picmodal">
+			<div class="picmodal_content">
+				<!-- 슬라이드 -->
+				<div id="demo" class="carousel slide" data-ride="carousel">
+					<!-- The slideshow 이미지  -->
+					<div class="carousel-inner">
+					
+					</div>
+					<!-- 이전 다음 버튼 -->
+					<a class="carousel-control-prev" href="#demo" data-slide="prev">
+						<span class="carousel-control-prev-icon"></span>
+					</a>
+					<a class="carousel-control-next" href="#demo" data-slide="next">
+						<span class="carousel-control-next-icon"></span>
+					</a>
+				</div>
+			</div>
+			<div class="picmodal_layer"></div>
+		</div>
+
+		<!-- 좌석예약 모달창 -->
+		<div id="seatmodal">
+			<div class="seatmodal_content ">
+				<a href="" class="close">❌</a><br>
+				<h2>예약</h2>
+				<input type='date' id='date'><br> 
+				<input type="time" id='time'><br>
+				<hr>
+				<div class="List">
+					<ul id="RList">
+					</ul>
+				</div>
+				<hr>
+				<button type="button" id="seatmodal_close_btn" class="btn btn-primary">예약 완료</button>
+			</div>
+			<div class="seatmodal_layer"></div>
+		</div>
+		<!-- 상품선택 모달창 -->
+		<div id="menumodal">
+			<div class="menumodal_content ">
+				<a href="" class="close">❌</a><br>
+				<div id="category">
+					Menu category
+					<div class="category" id="all">전 체</div>
+					<div class="category" id="Noodle">라면류</div>
+					<div class="category" id="Meal">밥 류</div>
+					<div class="category" id="Drink">음 료</div>
+					<div class="category" id="Snack">과자</div>
+					<div class="category" id="Dessert">간식</div>
+				</div>
+				<div id="menu">
+					
+				</div>
+				<div id="total">
+					<table id="totalTable" border="1">
+						<tr>
+							<th>상품명</th>
+							<th>판매금액</th>
+							<th>수량</th>
+							<th>최종금액</th>
+							<th>취소</th>
+						</tr>
+					</table>
+				</div>
+				<div id="reservation">
+					<div id="totalprice">
+					</div>
+					<div>
+						<button type="button" id="menumodal_close_btn" class="btn btn-primary closed res_btn">상품 예약</button>
+					</div>
+				</div>
+			</div>
+			<div class="menumodal_layer"></div>
+		</div>
+		좌석표<br>
+		<table id="seat"></table>
+		<button type="button" id="menumodal_opne_btn" class="btn btn-primary">예약</button>
+	</div>
+	<div th:include="/part/customerNav::copyright" class="gradation"></div>
+</body>
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<script th:inline="javascript">
+	let seat = /*[[${seat}]]*/
+	let franchiseeNo = /*[[${franchisee.franchiseeNo}]]*/
+	let picList = /*[[${picList}]]*/
+	let category = "all";
+	let menu = [];
+	$.ajax({
+		url:"/getFoodList",
+		method:"POST",
+		data:{"franchiseeNo":franchiseeNo},
+		success:function(json){
+			//console.log("success")
+			//console.log("json",json)
+			menu = json;
+			//console.log("menu",menu)
+		}
+	})
+	
+	
+let thumPic = "";
+let thumBic	= "";
+$(picList).each(function(index,item){
+	//console.log(item)
+	thumPic += "<img class='thumbnail round' src='http://ahp7242.cdn3.cafe24.com/franchisee/";
+	thumPic += item.fileName
+	thumPic += "'>"
+	
+	if(index == 0){
+		thumBic += "<div class='carousel-item active'> <img src='http://ahp7242.cdn3.cafe24.com/franchisee/";
+	} else {
+		thumBic += "<div class='carousel-item'> <img src='http://ahp7242.cdn3.cafe24.com/franchisee/";
+	}
+	
+	thumBic += item.fileName;
+	thumBic += "' width='800' height='500'> </div>"
+	
+		
+})
+$(".picmodal_link").append(thumPic)
+$(".carousel-inner").append(thumBic)
+//console.log(seat);
+//console.log(picList)
+$(document).ready(function(){
+	let html = "";
+	let rowMax = 0;
+	let colsMax = 0;
+	let reservationCount = 0
+	
+	$(seat).each(function(index,item){
+	//seat값을 검사하여 row값의 최대값을 rowMax에 저장
+		if(item.seatRow > rowMax){
+			rowMax = item.seatRow;
+		}
+		//seat값을 검사하여 cols값의 최대값을 colsMax에 저장
+		if(item.seatCols > colsMax){
+			colsMax = item.seatCols
+		}
+	})
+	//console.log(rowMax)
+	//console.log(colsMax)
+	
+	//좌석 표시중 마지막줄에 1줄 더하여 출력(pc방 길)
+	for(let row=1; row<=rowMax+1; row++){
+		html += "<tr id='"+row+"'>"
+		for(let cols=1; cols<=colsMax; cols++){
+			html += "<td id='"+cols+"'>"
+			html += "<div class='box'></div>";
+			html += "</td>";
+		}
+		html += "</tr>"
+	}
+	$("#seat").html(html);
+	console.log(menu)
+	
+	let category = "all"
+	$(".category").click(function(){
+		//console.log("category click")
+		category = $(this).attr("id");
+		//console.log(category)
+		$("#menu").empty()
+		let menuhtml = "<table border='1'>";
+		menuhtml += "<tr>";
+		$(menu).each(function(index,item){
+			console.log(menu)
+			if(category == "all") {
+				menuhtml += "<td class='item'>";
+				menuhtml += "<img src='http://ahp7242.cdn3.cafe24.com/food/";
+				menuhtml += item.fileName;
+				menuhtml += "' class='image' id='No"+item.foodNo+"' alt='";
+				menuhtml += item.foodName;
+				menuhtml += "'>";
+				menuhtml += "<div class='price'><input type='number' value='1' min='1' id='count'><p id='price'>";
+				menuhtml += item.foodPrice;
+				menuhtml += "원</p></div>"
+					menuhtml += "</td>"
+				if((index+1)%5 == 0){
+					menuhtml += "</tr><tr>"
+				}
+			}
+			if(category == item.foodCategory){
+				menuhtml += "<td class='item'>";
+				menuhtml += "<img src='http://ahp7242.cdn3.cafe24.com/food/";
+				menuhtml += item.fileName;
+				menuhtml += "' class='image' id='No"+item.foodNo+"' alt='";
+				menuhtml += item.foodName;
+				menuhtml += "'>";
+				menuhtml += "<div class='price'><input type='number' value='1' min='1' id='count'><p id='price'>";
+				menuhtml += item.foodPrice;
+				menuhtml += "원</p></div>";
+				menuhtml += "</td>";
+				if((index+1)%5 == 0){
+					menuhtml += "</tr><tr>";
+				}
+			}
+		})
+		menuhtml += "</tr>";
+		menuhtml += "</table>";
+		$("#menu").append(menuhtml)
+		
+		$('.image').on('click',function() {
+			let count = 0;
+			//console.log("image click")
+			let $no = $(this).attr("id")
+			let $name = $(this).attr("alt")
+			let $price = $(this).next().find("#price").text()
+			let $count = Number($(this).next().find("#count").val())
+			$price = Number($price.substr(0,($price.length-1)))
+			console.log("가격 :"+$price)
+			console.log("수량 :"+$count)
+			console.log("이미지 :"+$name)
+			$no = $no.substr(2)
+			console.log("번호:",$no)
+			
+			$("#totalTable tr").each(function(index,item){
+				if($(item).attr("id") == ("food"+$no)){
+					//console.log("있음")
+					//console.log("count 값",$(item).find("#count"+$no).text())
+					let newCount = Number($(item).find("#count"+$no).text())
+					let newTotal = (newCount + $count)*$price
+					$(item).find("#count"+$no).text(newCount + $count)
+					$(item).find("#total"+$no).text(newTotal)
+					count = 1;
+					return;
+				}
+			})
+			
+			let total = "<tr id='food"+$no+"'>";
+			total += "<td id='name"+$no+"'>";
+			total += $name;
+			total += "</td><td id='price"+$no+"'>";
+			total += $price
+			total += "</td><td class='foodCount' id='count"+$no+"'>";
+			total += $count
+			total += "</td><td class='totalprice' id='total"+$no+"'>";
+			total += ($count*$price);
+			total += "</td><td class='cancel'>X</td></tr>";
+					
+			if(count == 0){
+				//console.log("최종",count)
+				$("#totalTable").append(total)
+			}
+			//console.log("클릭끝")
+			let totalprice = 0;
+			$(".totalprice").each(function(index,item){
+				
+				totalprice += Number($(item).text());
+				//console.log(totalprice)
+				$("#totalprice").text(totalprice+"원")
+			})
+			$(".cancel").on("click",function(){
+				$(this).parent().remove()
+				totalprice = 0
+				$(".totalprice").each(function(index,item){
+					totalprice += Number($(item).text());
+					//console.log(totalprice)
+					$("#totalprice").text(totalprice+"원")
+					return;
+				})
+				//console.log($(".totalprice").text())
+				if($(".totalprice").text() == ""){
+					$("#totalprice").text("")
+				}
+			})
+		})
+		
+	})
+	
+	
+	//document.getElementById('date').value = new Date().toISOString().substring(0, 10);;
+	let item = [];
+	//console.log("이미지",$(".img").attr("alt"));
+	
+	$("#seat tr td").each(function(index1,item1){
+		//console.log($(this).closest('tr').attr('id'))
+		let $this = $(this)
+		let trId = $this.closest('tr').attr('id')
+		let tdId = $this.closest('td').attr('id')
+		/* console.log("tr",trId)
+		console.log("td",tdId) */
+		$(seat).each(function(index2,item2){
+			if(trId == item2.seatRow && tdId == item2.seatCols) {
+				/* console.log(item2.seatNo) */
+				$this.children().append("pc"+item2.seatNo)
+				//console.log(item2)
+				let use = item2.seatUse
+				switch(use){
+					case "Y":
+						$this.children().css("background-color","#B5B2FF");
+						$this.children().append("<br>사용중");
+						$this.children().attr("id","Y");
+						break;
+					case "N":
+						$this.children().css("background-color","#A0BAED");
+						$this.children().attr("id","N");
+						break;
+					case "R":
+						$this.children().css("background-color","#A566FF");
+						$this.children().append("<br>예약석");
+						$this.children().attr("id","R");
+						break;
+				}
+			}
+			
+		})
+	})
+	let seatNoList = [];
+	$("#seat div").each(function(index,item){
+		$(this).click(function(){
+			let divId = $(this).closest('div').attr("id")
+			let divtag = $(this).closest('div').text()
+			let seatNo = "";
+			seatNo = divtag.substring(2)
+			seatNo = seatNo.split('빈자리')
+			//console.log(divId[0])
+			if(divId == "N"){
+				//console.log(seatNo[0]);
+				//console.log(divId);
+				$(this).attr("id","TR")
+				$(this).css("background-color", "#A566FF")
+				seatNoList.push(seatNo[0])
+				//console.log(text)
+				
+			}
+			if(divId == "TR"){
+				//console.log(seatNo[0]);
+				//console.log(divId);
+				$(this).attr("id","N")
+				$(this).css("background-color", "#A0BAED")
+				seatNoList.pop(seatNo[0]);
+				//console.log(text)
+			}
+		})
+	})
+	
+	$("#menumodal_opne_btn").click(function(){
+		$("#seat div").each(function(index,item){
+			//console.log(item.id)
+			if(item.id == "TR"){
+				reservationCount += 1;
+			}
+		})
+			if(reservationCount > 0){
+				//console.log(reservationCount)
+				reservationCount = 0;
+			}
+			else {
+				alert("좌석을 선택해 주세요")
+				return;
+			}
+		
+		$("#RList").empty()
+		//console.log(seatNoList); 
+		seatNoList.sort(function (a, b) { return a-b; })
+		//console.log(seatNoList)
+		$(seatNoList).each(function(index,item){
+			$("#RList").append("<li id='"+item+"'>" + item + "번 좌석</li>")
+		})
+		$("#menumodal").fadeToggle( 'linear' )
+	});
+					   
+	$("#menumodal_close_btn").click(function(){
+		$("#seatmodal").fadeToggle( 'linear' )
+		$("#menumodal").attr("style", "display:none");
+	});
+	
+	$("#seatmodal_close_btn").click(function(){
+		//console.log("예약하기")
+		
+		
+		if($("#time").val() == ""){
+			alert("시간입력")
+			return;
+		}
+		//console.log(seatNoList)
+		$(seatNoList).each(function(index,item){
+			$.ajax({
+				url:"/seatReservation",
+				method:"POST",
+				data:{"seatNo":item, 
+					  "date":$("#date").val(), 
+					  "time":$("#time").val(), 
+					  "franchiseeNo":franchiseeNo}
+			})
+		})
+		$("#total tr").each(function(index,item){
+			if($(item).attr("id") != null){
+				let foodNo = $(item).attr("id").substr(4)
+				let count = $(item).find("#count"+foodNo).text()
+				console.log(foodNo)
+				console.log(count)
+				console.log($("#date").val(),$("#time").val())
+				$.ajax({
+					url:"/foodReservation",
+					method:"POST",
+					data:{"foodNo":foodNo, 
+						  "date":$("#date").val(), 
+						  "time":$("#time").val(), 
+						  "count":count},
+					success:function(){
+						location.reload()
+						console.log("예약성공")
+					}
+				})
+				
+			}
+		})
+		$("#seatmodal").attr("style", "display:none");
+	});	
+})
+</script>
+
+<script type="text/javascript">
+//모달창 스크립트
+    $(".picmodal_link").click(function(){
+		$("#picmodal").fadeToggle( 'linear' )
+        $("#picmodal").attr("style", "display:block");
+    });
+	$(".picmodal_layer").click(function(){
+		$("#picmodal").attr("style", "display:none");
+	})
+</script>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>singupType</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="css/heroic-features.css" rel="stylesheet">
+
+</head>
+<style>
+	td{
+		height:400px;
+		width:600px;
+		text-align:center;
+	}
+	#logo{
+		text-align: center;
+		height:170px;
+	}
+	
+	.gradation{
+        background: linear-gradient(to right bottom, #B96BC6, #FE5196);
+    }
+</style>
+<body>
+<div id="logo" >
+	<img src="/loginimage/logo.jpg">
+</div>
+	<div th:include="/part/customerNav::befornav" class="gradation"></div>
+	
+	<div class="container">
+		<table>
+			<tr>
+				<td>
+					<a href="/signup?customerType=O"><img src="/loginimage/building.PNG"></a>
+				</td>
+				<td>
+					<a href="/signup?customerType=C"><img src="/loginimage/customer.PNG"></a>
+				</td>
+			</tr>
+		</table>
+	</div>
+	
+	<div th:include="/part/customerNav::copyright" class="gradation"></div>
+</body>
+</html>
